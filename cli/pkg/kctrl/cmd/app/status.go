@@ -79,18 +79,19 @@ func (o *StatusOptions) Run() error {
 	}
 
 	appWatcher := NewAppWatcher(o.NamespaceFlags.Name, o.Name, o.Follow, o.IgnoreNotExists, o.ui, client)
+	appWatcher.PrintInfo(*app)
 
-	if o.Follow {
-		err = appWatcher.FollowApp(app)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
+	// if o.Follow {
+	// 	err = appWatcher.FollowApp(app)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	return nil
+	// }
 
-	_, err = appWatcher.PrintTillCurrent(app.Status)
+	err = appWatcher.TailAppStatus(app)
 	if err != nil && !o.Follow {
-		return err
+		return fmt.Errorf("App reconciliation failed")
 	}
 
 	return nil
